@@ -3,8 +3,6 @@ class Game < ActiveRecord::Base
   has_many :questions, through: :players
   has_many :categories, through: :questions
 
-
-
   def main_menu
     welcome
     while input ||= true
@@ -69,7 +67,7 @@ class Game < ActiveRecord::Base
   def get_difficulty
     puts "Choose your difficulty:"
     puts "Easy --- Medium --- Hard"
-    diff = gets.chomp
+    diff = gets.chomp.downcase
   end
 
 end
