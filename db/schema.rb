@@ -10,15 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 5) do
+ActiveRecord::Schema.define(version: 6) do
+
+  create_table "associations", force: :cascade do |t|
+    t.integer "player_id"
+    t.integer "game_id"
+    t.integer "question_id"
+  end
 
   create_table "categories", force: :cascade do |t|
     t.string "name"
   end
 
   create_table "games", force: :cascade do |t|
-    t.string  "name"
-    t.integer "player_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "players", force: :cascade do |t|

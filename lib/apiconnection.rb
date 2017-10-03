@@ -29,6 +29,7 @@ class ApiConnection
   end
 end
 
+
 # NOTES FOR API
 # https://opentdb.com/api.php?[filler]
 # filler = amount=?&category=?&difficulty=?&type=?&encode=?
@@ -36,3 +37,4 @@ end
 # category = ? (1..32)
 # difficulty = ? (easy, medium, hard)
 # type = ? (multiple, boolean)
+
