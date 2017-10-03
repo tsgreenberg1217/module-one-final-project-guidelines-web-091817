@@ -95,7 +95,15 @@ class Game < ActiveRecord::Base
       current_question, incorrect_array = Question.create_and_assign_score(next_question)
       current_player.questions << current_question
       current_question.display_to_player(incorrect_array)
-
+      puts 'Submit answer here:'
+      response = gets.chomp
+      if response.downcase == self.correct_answer.downcase
+        puts 'You are correct!'
+        current_player.total_score += current_question.score
+      else
+        puts "Sorry, that is not the right answer, the correct answer is #{current_question.correct_answer}"
+      end
+    end
 
 
     #get_question_hash

@@ -30,6 +30,8 @@ class Question < ActiveRecord::Base
     puts "     d) #{responses[3]}"
   end
 
-
+  def is_user_correct?(response)
+    response.downcase == self.correct_answer.split('').first
+  end
 
 end
