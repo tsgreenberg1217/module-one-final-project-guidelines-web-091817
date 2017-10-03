@@ -28,3 +28,13 @@ class ApiConnection
     #  keys => ["category", "type", "difficulty", "question", "correct_answer", "incorrect_answers"]
   end
 end
+
+
+# NOTES FOR API
+# https://opentdb.com/api.php?[filler]
+# filler = amount=?&category=?&difficulty=?&type=?&encode=?
+# amount = ? (1..50)
+# category = ? (1..32)
+# difficulty = ? (easy, medium, hard)
+# type = ? (multiple, boolean)
+

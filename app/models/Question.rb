@@ -1,5 +1,6 @@
 class Question < ActiveRecord::Base
   belongs_to :category
+
   has_many :associations
   has_many :players, through: :associations
   has_many :games, through: :associations
