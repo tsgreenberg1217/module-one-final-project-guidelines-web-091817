@@ -2,6 +2,7 @@ require 'bundler'
 Bundler.require
 
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
+ActiveRecord::Base.logger = nil
 require_relative '../lib/apiconnection.rb'
 require_relative '../app/models/Association.rb'
 require_relative '../app/models/Category.rb'

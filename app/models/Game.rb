@@ -62,7 +62,7 @@ class Game < ActiveRecord::Base
 
   def run_game
     # ----- code to pull data from api -----
-    request_hash = {:amount => 50, :category => nil, :difficulty => self.difficulty, :type => 'multiple' }
+    request_hash = {:amount => 50, :category => nil, :difficulty => self.difficulty, :type => 'multiple'}
     new_api = ApiConnection.new(request_hash)
     question_hash = new_api.get_questions
 

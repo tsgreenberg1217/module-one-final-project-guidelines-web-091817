@@ -36,8 +36,8 @@ end
 # category = ? (1..32)
 # difficulty = ? (easy, medium, hard)
 # type = ? (multiple, boolean)
-
-# request_hash = {:amount => 10, :category => nil, :difficulty => nil, :type => nil }
+# 
+# request_hash = {:amount => 50, :category => nil, :difficulty => nil, :type => nil }
 # new_api = ApiConnection.new(request_hash)
 # question_hash = new_api.get_questions
 #
