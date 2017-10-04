@@ -1,4 +1,4 @@
-class CreateAssociationsTable < ActiveRecord::Migration
+class CreateAssociationsTable < ActiveRecord::Migration[4.2]
   def change
     create_table :associations do |t|
       t.integer :player_id
