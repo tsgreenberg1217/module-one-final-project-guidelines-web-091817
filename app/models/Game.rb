@@ -6,40 +6,19 @@ class Game < ActiveRecord::Base
   has_many :questions, through: :associations
   has_many :categories, through: :questions
 
-  def main_menu
-    welcome
-    while input ||= true
-      display_menu
-      input = gets.chomp
-      case input
-      when '1'
-        start_game
-        #run_game
-      when '2'
-        #show_high_scores
-      when '3'
-        break
-      else
-        puts 'invalid input'
-      end
-    end
+  def self.welcome
+    puts "Welcome to WATSON TRIVIA."
   end
 
-  def welcome
-    puts "Welcome to the trivia game."
-  end
-
-  def display_menu
+  def self.display_menu
     puts "1. Start New Game."
     puts "2. View High Scores."
     puts "3. Exit Game"
   end
 
-
-
   def start_game
     get_players.each {|player| self.players << player }
-    get_type_of_game
+    get_game_mode
     get_difficulty
   end
 
@@ -49,18 +28,18 @@ class Game < ActiveRecord::Base
     Player.create_new_players(number)
   end
 
-  def get_type_of_game
-    puts "Choose game type:"
+  def get_game_mode
+    puts "Choose game mode:"
     puts "1. Survival"
-    puts "2. First 2 One-hundred"
-    type = gets.chomp
-    if type == '1'
-      self.type = 'Survival'
-    elsif type == '2'
-      self.type = 'First 2 One-hundred'
+    puts "2. First 2 One-Hundred"
+    mode = gets.chomp
+    if mode == '1'
+      self.mode = 'Survival'
+    elsif mode == '2'
+      self.mode = 'First 2 One-Hundred'
     else
       puts 'Invalid response.'
-      get_type_of_game
+      get_game_mode
     end
   end
 
@@ -73,7 +52,7 @@ class Game < ActiveRecord::Base
       self.difficulty = 'easy'
     elsif diff == 'medium'
       self.difficulty = 'medium'
-    elsif diff = 'hard'
+    elsif diff == 'hard'
       self.difficulty = 'hard'
     else
       puts 'invalid response'
@@ -91,39 +70,119 @@ class Game < ActiveRecord::Base
     player_array = self.players
     player_cycler = player_array.cycle
 
-    while !game_over?
+    while true
       # ----- cycle to next player object -----
       current_player = player_cycler.next
+
+      # ----- check if question hash empty; if yes, refresh api request -----
+      if question_hash == nil
+        question_hash = new_api.get_questions
+      end
 
       # ----- shift to next question in question_hash from api -----
       next_question = question_hash.shift
 
       # ----- create question object; pass along incorrect MC ansswers -----
-      current_question, incorrect_array = Question.create_and_assign_score(next_question)
+      current_question, incorrect_resp = Question.create_and_assign_score(next_question)
       current_player.questions << current_question
 
-      # ----- display MC answers -----
-      current_question.display_to_player(incorrect_array)
-      puts 'Submit answer here:'
-      response = gets.chomp
-      if response.downcase == self.correct_answer.downcase
+      # ----- display multiple choice -----
+      mult_choice = current_question.display_to_player(incorrect_resp)
+
+      # ----- ask player for response; record response -----
+      puts 'Please submit your answer (a-d):'
+
+      while true
+        response = gets.chomp.downcase
+        case response
+        when 'a'
+          response = mult_choice[0]
+          break
+        when 'b'
+          response = mult_choice[1]
+          break
+        when 'c'
+          response = mult_choice[2]
+          break
+        when 'd'
+          response = mult_choice[3]
+          break
+        else
+          puts 'Invalid input. Please choose again.'
+        end
+      end
+
+      # ----- check if right answer; display correct answer if wrong -----
+      if response == current_question.correct_answer
         puts 'You are correct!'
         current_player.total_score += current_question.score
       else
-        puts "Sorry, that is not the right answer, the correct answer is #{current_question.correct_answer}"
+        puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
+      end
+
+      if game_over?(current_player)
+        puts "Game Over. Thanks for playing!"
+        display_scores(player_array)
+        # Breaking out of while loop
+        break
       end
     end
-    
-    #get_question_hash
-    #-----while !game_over?
-    #create_question_object(hash)
-    #present question object
-    #get player answer
-    #record score
-    #check if game over
-      #true/show score and exit game
-      #false/show score and switch player
-
   end
 
+  def game_over?(player)
+    case self.mode
+    when "Race 2 One-Hundred"
+      player.total_score >= 100
+    when "Survival"
+      puts "Would you like to continue? (Y/N)"
+      input = gets.strip.downcase
+      case input
+      when "y" || "yes"
+        false
+      when "n" || "no"
+        true
+      else
+        puts "Invalid input. Please try again."
+        game_over?(player)
+      end
+    end
+  end
+
+  def display_scores(players)
+    players.sort_by {|player| player.total_score}
+    puts "------------- FINAL SCORES -------------"
+    players.each {|player| puts "#{player.username} - #{player.total_score}"}
+    puts "----------------------------------------"
+  end
+
+  def self.show_high_scores
+    puts "------------- ALL-TIME HIGH SCORES -------------"
+    high_scores = self.all.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}
+    (1..10).to_a.each do |num|
+      puts "#{num}. #{high_scores[num-1].username} --------------- #{high_scores[num-1].total_score}"
+    end
+    puts "-----------------------------------------------"
+  end
+
+  def self.run
+    Game.welcome
+
+    while input ||= true
+      Game.display_menu
+      input = gets.chomp
+      case input
+      when '1'
+        new_game = Game.create
+        new_game.start_game
+        new_game.run_game
+      when '2'
+        Game.show_high_scores
+      when '3'
+        puts "Thanks for playing!"
+        break
+      else
+        puts "Invalid input. Please try again."
+      end
+    end
+  end
 end

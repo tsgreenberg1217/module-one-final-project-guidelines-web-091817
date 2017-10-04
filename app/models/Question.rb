@@ -5,8 +5,6 @@ class Question < ActiveRecord::Base
   has_many :players, through: :associations
   has_many :games, through: :associations
 
-
-
   def self.create_and_assign_score(hash)
     score = 0
     case hash['difficulty']
@@ -17,18 +15,22 @@ class Question < ActiveRecord::Base
     when 'hard'
       score = 20
     end
-    [Question.create(content: hash["question"], type: hash['type'], difficulty: hash['difficulty'], score: score, correct_answer: hash["correct_answer"]), hash['incorrect_answers']]
+    new_question = Question.find_or_create_by(content: hash["question"], answer_type: hash['type'], difficulty: hash['difficulty'], score: score, correct_answer: hash["correct_answer"])
+    new_category = Category.find_or_create_by(name: hash["category"])
+    new_category.questions << new_question
 
+    [new_question, hash['incorrect_answers']]
   end
 
-  def display_to_player(inc_array)
-    puts "-- #{self.category}: -------------------------"
+  def display_to_player(incorrect_resp)
+    responses = [incorrect_resp, self.correct_answer].flatten.shuffle
+    puts "-- #{self.category.name}: -------------------------"
     puts "-- #{self.content} --"
-    responses = [inc_array, self.correct_answer].flatten.shuffle
     puts "     a) #{responses[0]}"
     puts "     b) #{responses[1]}"
     puts "     c) #{responses[2]}"
     puts "     d) #{responses[3]}"
+    responses
   end
 
   def is_user_correct?(response)
