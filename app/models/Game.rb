@@ -13,7 +13,8 @@ class Game < ActiveRecord::Base
   def self.display_menu
     puts "1. Start New Game."
     puts "2. View High Scores."
-    puts "3. Exit Game"
+    puts "3. Play Tic-Tac-Toe"
+    puts "4. Exit Game"
   end
 
   def start_game
@@ -43,6 +44,7 @@ class Game < ActiveRecord::Base
     end
   end
 
+
   def get_difficulty
     puts "Choose your difficulty:"
     puts "Easy --- Medium --- Hard"
@@ -60,11 +62,16 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def run_game
+  def get_data_from_api
     # ----- code to pull data from api -----
     request_hash = {:amount => 50, :category => nil, :difficulty => self.difficulty, :type => 'multiple' }
     new_api = ApiConnection.new(request_hash)
     question_hash = new_api.get_questions
+
+  end
+
+  def run_game
+    question_hash = get_data_from_api
 
     # ----- create cycler from all players in game object -----
     player_array = self.players
@@ -86,12 +93,14 @@ class Game < ActiveRecord::Base
       current_question, incorrect_resp = Question.create_and_assign_score(next_question)
       current_player.questions << current_question
 
+      puts "#{current_player.username}, it's your turn!"
       # ----- display multiple choice -----
       mult_choice = current_question.display_to_player(incorrect_resp)
 
       # ----- ask player for response; record response -----
-      puts 'Please submit your answer (a-d):'
 
+
+      puts 'Please submit your answer (a-d):'
       while true
         response = gets.chomp.downcase
         case response
@@ -132,7 +141,12 @@ class Game < ActiveRecord::Base
   def game_over?(player)
     case self.mode
     when "Race 2 One-Hundred"
-      player.total_score >= 100
+      if player.total_score >= 100
+        puts "#{player.username} wins!"
+        true
+      else
+        false
+      end
     when "Survival"
       puts "Would you like to continue? (Y/N)"
       input = gets.strip.downcase
@@ -178,6 +192,12 @@ class Game < ActiveRecord::Base
       when '2'
         Game.show_high_scores
       when '3'
+        new_game = Game.create
+        Player.create_new_players(2)
+        get_game_mode
+        get_difficulty
+        #runs tic tac toe
+      when '4'
         puts "Thanks for playing!"
         break
       else
