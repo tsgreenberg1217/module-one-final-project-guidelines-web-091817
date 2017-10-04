@@ -139,11 +139,16 @@ end
 
 
 def diagonal_1?(board)
-  [board[0][0],board[1][1],board[2][2]].uniq.length == 1 && board.uniq.first != " "
+  [board[0][0],board[1][1],board[2][2]].uniq.length == 1 && [board[0][0],board[1][1],board[2][2]].uniq.first != " "
 end
 
 def diagonal_2?(board)
-  [board[0][2],board[1][1],board[2][0]].uniq.length == 1 && board.uniq.first != " "
+  [board[0][2],board[1][1],board[2][0]].uniq.length == 1 && [board[0][2],board[1][1],board[2][0]].uniq.first != " "
+end
+
+
+def check_whole_board
+  [vertical?(ttt_board), accross?(ttt_board), diagonal_1?(ttt_board), diagonal_2?(ttt_board)].include? (true)
 end
 
 end

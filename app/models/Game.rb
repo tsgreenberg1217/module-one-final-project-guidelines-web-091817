@@ -13,8 +13,7 @@ class Game < ActiveRecord::Base
   def self.display_menu
     puts "1. Start New Game."
     puts "2. View High Scores."
-    puts "3. Play Tic-Tac-Toe"
-    puts "4. Exit Game"
+    puts "3. Exit Game"
   end
 
   def start_game
@@ -33,11 +32,14 @@ class Game < ActiveRecord::Base
     puts "Choose game mode:"
     puts "1. Survival"
     puts "2. First 2 One-Hundred"
+    puts "3. Tic-Tac-Toe"
     mode = gets.chomp
     if mode == '1'
       self.mode = 'Survival'
     elsif mode == '2'
       self.mode = 'First 2 One-Hundred'
+    elsif mode == '3'
+      self.mode = "Tic-Tac-Toe"
     else
       puts 'Invalid response.'
       get_game_mode
@@ -147,6 +149,8 @@ class Game < ActiveRecord::Base
       else
         false
       end
+    when "Tic-Tac-Toe"
+      check_whole_board(ttt_board)
     when "Survival"
       puts "Would you like to continue? (Y/N)"
       input = gets.strip.downcase
