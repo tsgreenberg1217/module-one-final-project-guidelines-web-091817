@@ -83,7 +83,7 @@ class Game < ActiveRecord::Base
 
       # ----- check if question hash empty; if yes, refresh api request -----
       if question_hash == nil
-        question_hash = new_api.get_questions
+        question_hash = get_data_from_api
       end
 
       # ----- shift to next question in question_hash from api -----
@@ -193,7 +193,10 @@ class Game < ActiveRecord::Base
         Game.show_high_scores
       when '3'
         new_game = Game.create
-        Player.create_new_players(2)
+        #creates 2 ttt players and pushes them to game obj
+        ttt_players = Player.create_new_players(2)
+        ttt_players.each {|player| self.players << player }
+        ##################################################
         get_game_mode
         get_difficulty
         #runs tic tac toe
