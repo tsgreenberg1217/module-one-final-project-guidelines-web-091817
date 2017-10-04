@@ -29,7 +29,6 @@ class ApiConnection
   end
 end
 
-
 # NOTES FOR API
 # https://opentdb.com/api.php?[filler]
 # filler = amount=?&category=?&difficulty=?&type=?&encode=?
@@ -38,3 +37,18 @@ end
 # difficulty = ? (easy, medium, hard)
 # type = ? (multiple, boolean)
 
+# request_hash = {:amount => 10, :category => nil, :difficulty => nil, :type => nil }
+# new_api = ApiConnection.new(request_hash)
+# question_hash = new_api.get_questions
+#
+# current_question = question_hash.first
+#
+# responses = [current_question["correct_answer"], current_question["incorrect_answers"][0], current_question["incorrect_answers"][1], current_question["incorrect_answers"][2]]
+# responses.shuffle!
+#
+# puts "-- #{current_question["category"]}: -------------------------"
+# puts "-- #{current_question["question"]} --"
+# puts "     a) #{responses[0]}"
+# puts "     b) #{responses[1]}"
+# puts "     c) #{responses[2]}"
+# puts "     d) #{responses[3]}"

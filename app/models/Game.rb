@@ -82,17 +82,27 @@ class Game < ActiveRecord::Base
   end
 
   def run_game
+    # ----- code to pull data from api -----
     request_hash = {:amount => 50, :category => nil, :difficulty => self.difficulty, :type => 'multiple' }
     new_api = ApiConnection.new(request_hash)
     question_hash = new_api.get_questions
+
+    # ----- create cycler from all players in game object -----
     player_array = self.players
     player_cycler = player_array.cycle
 
-    while !game_over? #create this method
+    while !game_over?
+      # ----- cycle to next player object -----
       current_player = player_cycler.next
+
+      # ----- shift to next question in question_hash from api -----
       next_question = question_hash.shift
+
+      # ----- create question object; pass along incorrect MC ansswers -----
       current_question, incorrect_array = Question.create_and_assign_score(next_question)
       current_player.questions << current_question
+
+      # ----- display MC answers -----
       current_question.display_to_player(incorrect_array)
       puts 'Submit answer here:'
       response = gets.chomp
@@ -103,8 +113,7 @@ class Game < ActiveRecord::Base
         puts "Sorry, that is not the right answer, the correct answer is #{current_question.correct_answer}"
       end
     end
-
-
+    
     #get_question_hash
     #-----while !game_over?
     #create_question_object(hash)
