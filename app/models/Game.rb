@@ -118,7 +118,6 @@ class Game < ActiveRecord::Base
       if current_question.correct?(response)
          current_player.total_score += current_question.score
       end
-      # binding.pry
 
       if game_over?(current_player, response, current_question.correct_answer, board = nil)
         puts "Game Over. Thanks for playing!"
@@ -556,35 +555,11 @@ class Game < ActiveRecord::Base
         # ----- ask player for response; record response -----
         puts 'Please submit your answer (a-d):'
 
-        while true
-          response = gets.chomp.downcase
-          case response
-          when 'a'
-            response = mult_choice[0]
-            break
-          when 'b'
-            response = mult_choice[1]
-            break
-          when 'c'
-            response = mult_choice[2]
-            break
-          when 'd'
-            response = mult_choice[3]
-            break
-          else
-            puts 'Invalid input. Please choose again.'
-          end
-        end
+        response = current_player.get_response_from_player(mult_choice)
 
         # ----- check if right answer; display correct answer if wrong -----
-        if response == current_question.correct_answer
-          puts 'You are correct!'
+        if current_question.correct?(response)
           current_player.total_score += q_score.to_i
-          # binding.pry
-          puts ""
-        else
-          puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
-          puts ""
         end
 
         # ----- display scoreboard -----
