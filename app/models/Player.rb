@@ -15,4 +15,32 @@ class Player < ActiveRecord::Base
     playerArray
   end
 
+
+  def get_response_from_player(mult_choice)
+    puts 'Please submit your answer (a-d):'
+    while true
+      response = gets.chomp.downcase
+      case response
+      when 'a'
+        response = mult_choice[0]
+        break
+      when 'b'
+        response = mult_choice[1]
+        break
+      when 'c'
+        response = mult_choice[2]
+        break
+      when 'd'
+        response = mult_choice[3]
+        break
+      else
+        puts 'Invalid input. Please choose again.'
+      end
+    end
+    response
+  end
+
+  
+
+
 end

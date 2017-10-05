@@ -39,4 +39,23 @@ class Question < ActiveRecord::Base
     response.downcase == self.correct_answer.split('').first
   end
 
+  def self.create_and_associate_to_player(hash, player)
+      current_question, incorrect_resp = self.create_and_assign_score(hash)
+      player.questions << current_question
+      [current_question, incorrect_resp]
+  end
+
+
+  def correct?(response)
+    if response == self.correct_answer
+      puts 'You are correct!'
+      true
+    else
+      puts "Sorry, that is not the right answer. The correct answer is #{self.correct_answer}."
+      false
+    end
+  end
+
+
+
 end
