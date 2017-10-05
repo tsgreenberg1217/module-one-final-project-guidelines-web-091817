@@ -43,7 +43,7 @@ class Game < ActiveRecord::Base
     if mode == '1'
       self.mode = 'Survival'
     elsif mode == '2'
-      self.mode = 'First 2 One-Hundred'
+      self.mode = "First 2 One-Hundred"
     elsif mode == '3'
       self.mode = 'Tic-Tac-Toe'
     elsif mode == '4'
@@ -118,9 +118,12 @@ class Game < ActiveRecord::Base
       if current_question.correct?(response)
          current_player.total_score += current_question.score
       end
-      # binding.pry
 
+<<<<<<< HEAD
       if game_over?(current_player, response, current_question.correct_answer, board)
+=======
+      if game_over?(current_player, response, current_question.correct_answer, board = nil)
+>>>>>>> refectoring
         puts "Game Over. Thanks for playing!"
         display_scores(player_array)
         # Breaking out of while loop
@@ -190,7 +193,9 @@ class Game < ActiveRecord::Base
         new_game.start_game
 
         case new_game.mode
-        when "Survival" || "Race 2 One-Hundred"
+        when "Survival"
+          new_game.run_og_game
+        when "First 2 One-Hundred"
           new_game.run_og_game
         when "Jeopardy"
           new_game.run_jeopardy
@@ -554,35 +559,19 @@ class Game < ActiveRecord::Base
         # ----- ask player for response; record response -----
         puts 'Please submit your answer (a-d):'
 
-        while true
-          response = gets.chomp.downcase
-          case response
-          when 'a'
-            response = mult_choice[0]
-            break
-          when 'b'
-            response = mult_choice[1]
-            break
-          when 'c'
-            response = mult_choice[2]
-            break
-          when 'd'
-            response = mult_choice[3]
-            break
-          else
-            puts 'Invalid input. Please choose again.'
-          end
-        end
+        response = current_player.get_response_from_player(mult_choice)
 
         # ----- check if right answer; display correct answer if wrong -----
-        if response == current_question.correct_answer
-          puts 'You are correct!'
+        if current_question.correct?(response)
           current_player.total_score += q_score.to_i
+<<<<<<< HEAD
           # binding.pry
           puts ""
         else
           puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
           puts ""
+=======
+>>>>>>> refectoring
         end
 
         # ----- display scoreboard -----
