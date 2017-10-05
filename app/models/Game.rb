@@ -76,7 +76,6 @@ class Game < ActiveRecord::Base
     request_hash = {:amount => 50, :category => nil, :difficulty => self.difficulty, :type => 'multiple'}
     new_api = ApiConnection.new(request_hash)
     question_hash = new_api.get_questions
-
   end
 
   def run_og_game
@@ -99,8 +98,12 @@ class Game < ActiveRecord::Base
       next_question = question_hash.shift
 
       # ----- create question object; pass along incorrect MC ansswers -----
-      current_question, incorrect_resp = Question.create_and_assign_score(next_question)
-      current_player.questions << current_question
+      ##### OG CODE
+      # current_question, incorrect_resp = Question.create_and_assign_score(next_question)
+      # current_player.questions << current_question
+      ##### OG CODE
+      current_question, incorrect_resp = Question.create_and_associate_to_player(next_question, current_player)
+
 
       puts "#{current_player.username}, it's your turn!"
 
@@ -108,37 +111,16 @@ class Game < ActiveRecord::Base
       mult_choice = current_question.display_to_player(incorrect_resp)
 
       # ----- ask player for response; record response -----
-      puts 'Please submit your answer (a-d):'
-      while true
-        response = gets.chomp.downcase
-        case response
-        when 'a'
-          response = mult_choice[0]
-          break
-        when 'b'
-          response = mult_choice[1]
-          break
-        when 'c'
-          response = mult_choice[2]
-          break
-        when 'd'
-          response = mult_choice[3]
-          break
-        else
-          puts 'Invalid input. Please choose again.'
-        end
-      end
+      response = current_player.get_response_from_player(mult_choice)
+
 
       # ----- check if right answer; display correct answer if wrong -----
-      if response == current_question.correct_answer
-        puts 'You are correct!'
-        current_player.total_score += current_question.score
-      else
-        puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
+      if current_question.correct?(response)
+         current_player.total_score += current_question.score
       end
       # binding.pry
 
-      if game_over?(current_player, response, current_question.correct_answer)
+      if game_over?(current_player, response, current_question.correct_answer, board)
         puts "Game Over. Thanks for playing!"
         display_scores(player_array)
         # Breaking out of while loop
@@ -147,7 +129,7 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def game_over?(player, response, correct_answer)
+  def game_over?(player, response, correct_answer, board)
     case self.mode
     when "Race 2 One-Hundred"
       if player.total_score >= 100
@@ -163,6 +145,16 @@ class Game < ActiveRecord::Base
         puts "You got the question wrong, survival mode has ended. Thanks for playing!"
         true
       end
+    when "Tic-Tac-Toe"
+      if check_for_winner?(board)
+        puts "Congrats #{current_player.username}, you got tic-tack toe!"
+        return true
+      end
+      if no_blank_space?(board)
+        puts "Stalemate"
+        return true
+      end
+        return false
     end
   end
 
@@ -293,8 +285,7 @@ class Game < ActiveRecord::Base
       next_question = question_hash.shift
 
       # ----- create question object; pass along incorrect MC ansswers -----
-      current_question, incorrect_resp = Question.create_and_assign_score(next_question)
-      current_player.questions << current_question
+      current_question, incorrect_resp = Question.create_and_associate_to_player(next_question, current_player)
 
       puts "#{current_player.username}, it's your turn!"
       puts ""
@@ -302,45 +293,18 @@ class Game < ActiveRecord::Base
       mult_choice = current_question.display_to_player(incorrect_resp)
 
       # ----- ask player for response; record response -----
-      puts 'Please submit your answer (a-d):'
-      while true
-        response = gets.chomp.downcase
-        case response
-        when 'a'
-          response = mult_choice[0]
-          break
-        when 'b'
-          response = mult_choice[1]
-          break
-        when 'c'
-          response = mult_choice[2]
-          break
-        when 'd'
-          response = mult_choice[3]
-          break
-        else
-          puts 'Invalid input. Please choose again.'
-        end
-      end
-
+      response = current_player.get_response_from_player(mult_choice)
       # ----- check if right answer; display correct answer if wrong -----
-      if response == current_question.correct_answer
-        puts 'You are correct!'
+      if current_question.correct?(response)
         ttt_correct(current_player, board)
-      else
-        puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
       end
       #binding.pry
-      if check_whole_board(board)
-        puts "Congrats #{current_player.username}, you got tic-tack toe!"
-        break
-      end
-      if no_blank_space?(board)
-        puts "Stalemate"
+      if game_over?(current_player, response, current_question.correct_answer, board)
         break
       end
     end
   end
+
 
   def ttt_correct(player, board)
     display_TTT_board(board)
@@ -401,7 +365,7 @@ class Game < ActiveRecord::Base
   end
 
 
-  def check_whole_board(board)
+  def check_for_winner?(board)
     [vertical?(board), accross?(board), diagonal_1?(board), diagonal_2?(board)].include?(true)
   end
 
@@ -486,6 +450,7 @@ class Game < ActiveRecord::Base
   def announce_winner
     puts "Congratulations, #{self.players.max_by {|player| player.total_score}.username}. You are the winner!"
   end
+
 
   def find_ques_attributes_by_move(move, cats, board)
     # ----- find category and difficulty -----
@@ -581,8 +546,7 @@ class Game < ActiveRecord::Base
 
         # binding.pry
         # ----- create question object; pass along incorrect MC answers -----
-        current_question, incorrect_resp = Question.create_and_assign_score(next_question)
-        current_player.questions << current_question
+        current_question, incorrect_resp = Question.create_and_associate_to_player(next_question, current_player)
 
         # ----- display multiple choice -----
         mult_choice = current_question.display_to_player(incorrect_resp)
@@ -614,7 +578,7 @@ class Game < ActiveRecord::Base
         if response == current_question.correct_answer
           puts 'You are correct!'
           current_player.total_score += q_score.to_i
-          binding.pry
+          # binding.pry
           puts ""
         else
           puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
