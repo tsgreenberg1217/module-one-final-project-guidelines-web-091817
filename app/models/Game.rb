@@ -47,7 +47,6 @@ class Game < ActiveRecord::Base
     end
   end
 
-
   def get_difficulty
     puts "Choose your difficulty:"
     puts "Easy --- Medium --- Hard"
@@ -97,12 +96,11 @@ class Game < ActiveRecord::Base
       current_player.questions << current_question
 
       puts "#{current_player.username}, it's your turn!"
+      
       # ----- display multiple choice -----
       mult_choice = current_question.display_to_player(incorrect_resp)
 
       # ----- ask player for response; record response -----
-
-
       puts 'Please submit your answer (a-d):'
       while true
         response = gets.chomp.downcase
