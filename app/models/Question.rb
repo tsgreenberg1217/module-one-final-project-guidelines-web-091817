@@ -24,12 +24,14 @@ class Question < ActiveRecord::Base
 
   def display_to_player(incorrect_resp)
     responses = [incorrect_resp, self.correct_answer].flatten.shuffle
-    puts "-- #{self.category.name}: -------------------------"
-    puts "-- #{self.content} --"
+    puts "-- #{self.category.name}:"
+    puts "-- #{self.content}"
     puts "     a) #{responses[0]}"
     puts "     b) #{responses[1]}"
     puts "     c) #{responses[2]}"
     puts "     d) #{responses[3]}"
+    puts "-------------------------------------------------------"
+    puts ""
     responses
   end
 
