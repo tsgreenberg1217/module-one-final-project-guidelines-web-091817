@@ -131,8 +131,9 @@ class Game < ActiveRecord::Base
       else
         puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
       end
+      # binding.pry
 
-      if game_over?(current_player, response)
+      if game_over?(current_player, response, current_question.correct_answer)
         puts "Game Over. Thanks for playing!"
         display_scores(player_array)
         # Breaking out of while loop
@@ -141,7 +142,7 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def game_over?(player, response)
+  def game_over?(player, response, correct_answer)
     case self.mode
     when "Race 2 One-Hundred"
       if player.total_score >= 100
@@ -153,7 +154,7 @@ class Game < ActiveRecord::Base
     # when "Tic-Tac-Toe"
     #   check_whole_board(ttt_board)
     when "Survival"
-      if response == current_question.correct_answer
+      if response == correct_answer
         false
       else
         puts "You got the question wrong, survival mode has ended. Thanks for playing!"
