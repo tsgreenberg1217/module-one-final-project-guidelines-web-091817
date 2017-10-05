@@ -237,11 +237,15 @@ def player_choose_postion(player, board)
 end
 
 def display_TTT_board(board)
-  puts " #{board[0][0]} | #{board[0][1]} | #{board[0][2]} "
-  puts "-----------"
-  puts " #{board[1][0]} | #{board[1][1]} | #{board[1][2]} "
-  puts "-----------"
-  puts " #{board[2][0]} | #{board[2][1]} | #{board[2][2]} "
+  puts "             "
+  puts "    1   2   3"
+  puts"          "
+  puts "1   #{board[0][0]} | #{board[0][1]} | #{board[0][2]} "
+  puts "   -----------"
+  puts "2   #{board[1][0]} | #{board[1][1]} | #{board[1][2]} "
+  puts "   -----------"
+  puts "3   #{board[2][0]} | #{board[2][1]} | #{board[2][2]} "
+  puts "    "
 end
 
 def players_choose_symbols(array)
