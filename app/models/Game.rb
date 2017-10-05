@@ -341,18 +341,24 @@ def ttt_correct(player, board)
   puts "choose your position!"
   puts "Enter your row:"
   row = gets.chomp
+  check_ttt_square_input(player, board, row)
   puts "Enter your column:"
   column = gets.chomp
+  check_ttt_square_input(player, board, column)
     if board[(row.to_i)-1][(column.to_i)-1] == " "
       board[(row.to_i)-1][(column.to_i)-1] = player.ttt_symbol
       display_TTT_board(board)
-    elsif row.to_i > 3 || row.to_i < 1 || column.to_i > 3 || column.to_i < 1
-      puts "invalid response"
-      ttt_correct(player, board)
     else
       puts "That spot is taken."
       ttt_correct(player, board)
     end
+end
+
+def check_ttt_square_input(player, board, input)
+  if input.to_i > 3 || input.to_i < 1
+    puts "invalid response"
+    ttt_correct(player, board)
+  end
 end
 
 def vertical?(board)
