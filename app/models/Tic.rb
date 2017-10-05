@@ -147,8 +147,6 @@ def diagonal_2?(board)
 end
 
 
-def check_whole_board
-  [vertical?(ttt_board), accross?(ttt_board), diagonal_1?(ttt_board), diagonal_2?(ttt_board)].include? (true)
-end
-
+def check_whole_board(board)
+  [vertical?(board), accross?(board), diagonal_1?(board), diagonal_2?(board)].include? (true)
 end

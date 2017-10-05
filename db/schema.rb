@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 6) do
   create_table "players", force: :cascade do |t|
     t.string "username"
     t.integer "total_score"
+    t.string "ttt_symbol"
   end
 
   create_table "questions", force: :cascade do |t|
