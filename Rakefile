@@ -19,6 +19,8 @@ task :seeds do
   require_relative './db/seeds.rb'
 end
 
+
+
 # namespace :db do
 #   task :migrate => :environment do
 #     migrate_db

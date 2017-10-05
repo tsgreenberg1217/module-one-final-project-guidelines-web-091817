@@ -9,3 +9,6 @@ require_relative '../app/models/Category.rb'
 require_relative '../app/models/Game.rb'
 require_relative '../app/models/Player.rb'
 require_relative '../app/models/Question.rb'
+
+# require_all'app'
+# require_all'lib'

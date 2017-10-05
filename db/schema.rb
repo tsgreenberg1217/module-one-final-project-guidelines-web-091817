@@ -23,22 +23,23 @@ ActiveRecord::Schema.define(version: 6) do
   end
 
   create_table "games", force: :cascade do |t|
-    t.string   "mode"
-    t.string   "difficulty"
+    t.string "mode"
+    t.string "difficulty"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "players", force: :cascade do |t|
-    t.string  "username"
+    t.string "username"
     t.integer "total_score"
+    t.string "ttt_symbol"
   end
 
   create_table "questions", force: :cascade do |t|
-    t.string  "content"
-    t.string  "correct_answer"
-    t.string  "answer_type"
-    t.string  "difficulty"
+    t.string "content"
+    t.string "correct_answer"
+    t.string "answer_type"
+    t.string "difficulty"
     t.integer "score"
     t.integer "category_id"
   end
