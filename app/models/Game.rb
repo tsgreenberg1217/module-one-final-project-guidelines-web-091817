@@ -198,11 +198,11 @@ class Game < ActiveRecord::Base
         Game.show_high_scores
       when '3'
         new_game = Game.create
+        new_game.mode = "Tic-Tac-Toe"
         #creates 2 ttt players and pushes them to game obj
         ttt_players = Player.create_new_players(2)
         ttt_players.each {|player| new_game.players << player}
         ##################################################
-        new_game.get_game_mode
         new_game.get_difficulty
         new_game.run_tic_tac_toe
       when '4'
@@ -261,7 +261,7 @@ def players_choose_symbols(array)
       players_choose_symbols(array)
     end
     return [chosen_player,last_player]
-    binding.pry
+    #binding.pry
 end
 
 
@@ -324,9 +324,13 @@ def run_tic_tac_toe
     else
       puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
     end
-
-    if game_over?(current_player)
-      puts "Game Over. Thanks for playing!"
+    #binding.pry
+    if check_whole_board(board)
+      puts "Congrats #{current_player.username}, you got tic-tack toe!"
+      break
+    end
+    if no_blank_space?(board)
+      puts "Stalemate"
       break
     end
   end
@@ -339,20 +343,16 @@ def ttt_correct(player, board)
   row = gets.chomp
   puts "Enter your column:"
   column = gets.chomp
-  #binding.pry
     if board[(row.to_i)-1][(column.to_i)-1] == " "
       board[(row.to_i)-1][(column.to_i)-1] = player.ttt_symbol
       display_TTT_board(board)
-    elsif row > 3 || row < 1 || column > 3 || column < 1
+    elsif row.to_i > 3 || row.to_i < 1 || column.to_i > 3 || column.to_i < 1
       puts "invalid response"
       ttt_correct(player, board)
     else
       puts "That spot is taken."
       ttt_correct(player, board)
     end
-  puts board
-  #why does returning the board make it work?
-  board
 end
 
 def vertical?(board)
@@ -389,9 +389,17 @@ end
 
 
 def check_whole_board(board)
-  [vertical?(board), accross?(board), diagonal_1?(board), diagonal_2?(board)].include? (true)
+  [vertical?(board), accross?(board), diagonal_1?(board), diagonal_2?(board)].include?(true)
 end
 
+def no_blank_space?(board)
+  3.times do |x|
+    3.times do |y|
+      return false if board[x][y] == " "
+    end
+  end
+  return true
+end
 
 
 end
