@@ -167,13 +167,13 @@ class Game < ActiveRecord::Base
   end
 
   def self.show_high_scores
-   puts "--------------- ALL-TIME HIGH SCORES ------------------"
-   high_scores = self.all.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}
-   (1..10).to_a.each do |num|
-     puts "#{num}. #{high_scores[num-1].username} --------------- #{high_scores[num-1].total_score}"
-   end
-   puts "-------------------------------------------------------"
- end
+    puts "--------------- ALL-TIME HIGH SCORES ------------------"
+    high_scores = self.all.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}
+    (1..10).to_a.each do |num|
+      puts "#{num}. #{high_scores[num-1].username} --------------- #{high_scores[num-1].total_score}"
+    end
+    puts "-------------------------------------------------------"
+  end
 
   # -----------------------------------------------------------------------------
   # ***** MAIN RUNNER FILE *****
