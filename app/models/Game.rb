@@ -43,7 +43,7 @@ class Game < ActiveRecord::Base
     if mode == '1'
       self.mode = 'Survival'
     elsif mode == '2'
-      self.mode = 'First 2 One-Hundred'
+      self.mode = "First 2 One-Hundred"
     elsif mode == '3'
       self.mode = 'Tic-Tac-Toe'
     elsif mode == '4'
@@ -120,7 +120,7 @@ class Game < ActiveRecord::Base
       end
       # binding.pry
 
-      if game_over?(current_player, response, current_question.correct_answer, board)
+      if game_over?(current_player, response, current_question.correct_answer, board = nil)
         puts "Game Over. Thanks for playing!"
         display_scores(player_array)
         # Breaking out of while loop
@@ -190,7 +190,9 @@ class Game < ActiveRecord::Base
         new_game.start_game
 
         case new_game.mode
-        when "Survival" || "Race 2 One-Hundred"
+        when "Survival"
+          new_game.run_og_game
+        when "First 2 One-Hundred"
           new_game.run_og_game
         when "Jeopardy"
           new_game.run_jeopardy
