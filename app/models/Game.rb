@@ -119,11 +119,9 @@ class Game < ActiveRecord::Base
          current_player.total_score += current_question.score
       end
 
-<<<<<<< HEAD
-      if game_over?(current_player, response, current_question.correct_answer, board)
-=======
       if game_over?(current_player, response, current_question.correct_answer, board = nil)
->>>>>>> refectoring
+        self.players.each{|player| player.save}
+        self.save
         puts "Game Over. Thanks for playing!"
         display_scores(player_array)
         # Breaking out of while loop
@@ -134,7 +132,7 @@ class Game < ActiveRecord::Base
 
   def game_over?(player, response, correct_answer, board)
     case self.mode
-    when "Race 2 One-Hundred"
+    when "First 2 One-Hundred"
       if player.total_score >= 100
         puts "#{player.username} wins!"
         true
@@ -150,7 +148,7 @@ class Game < ActiveRecord::Base
       end
     when "Tic-Tac-Toe"
       if check_for_winner?(board)
-        puts "Congrats #{current_player.username}, you got tic-tack toe!"
+        puts "Congrats #{player.username}, you got tic-tack toe!"
         return true
       end
       if no_blank_space?(board)
@@ -169,13 +167,13 @@ class Game < ActiveRecord::Base
   end
 
   def self.show_high_scores
-    puts "--------------- ALL-TIME HIGH SCORES ------------------"
-    high_scores = self.all.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}
-    (1..10).to_a.each do |num|
-      puts "#{num}. #{high_scores[num-1].username} --------------- #{high_scores[num-1].total_score}"
-    end
-    puts "-------------------------------------------------------"
-  end
+   puts "--------------- ALL-TIME HIGH SCORES ------------------"
+   high_scores = self.all.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}
+   (1..10).to_a.each do |num|
+     puts "#{num}. #{high_scores[num-1].username} --------------- #{high_scores[num-1].total_score}"
+   end
+   puts "-------------------------------------------------------"
+ end
 
   # -----------------------------------------------------------------------------
   # ***** MAIN RUNNER FILE *****
@@ -186,6 +184,7 @@ class Game < ActiveRecord::Base
 
     while input ||= true
       Game.display_menu
+      binding.pry
       input = gets.chomp
       case input
       when '1'
@@ -564,20 +563,14 @@ class Game < ActiveRecord::Base
         # ----- check if right answer; display correct answer if wrong -----
         if current_question.correct?(response)
           current_player.total_score += q_score.to_i
-<<<<<<< HEAD
-          # binding.pry
-          puts ""
-        else
-          puts "Sorry, that is not the right answer. The correct answer is #{current_question.correct_answer}."
-          puts ""
-=======
->>>>>>> refectoring
         end
 
         # ----- display scoreboard -----
         display_scores(player_array)
 
         if board_empty?(board)
+          self.players.each{|player| player.save}
+          self.save
           break
         end
       end

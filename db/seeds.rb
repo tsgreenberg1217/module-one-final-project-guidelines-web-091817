@@ -6,14 +6,14 @@ require_relative '../app/models/Question.rb'
 
 
 # Seed players
-todd = Player.create(username: "Todd", total_score: 100)
+todd = Player.create(username: "Todd", total_score: 90)
 gene = Player.create(username: "Gene", total_score: 80)
 
 jason = Player.create(username: "Jason", total_score: 50)
-tim = Player.create(username: "Tim", total_score: 100)
+tim = Player.create(username: "Tim", total_score: 90)
 es = Player.create(username: "Es", total_score: 50)
 
-anon_1 = Player.create(username: "Anon 1", total_score: 100)
+anon_1 = Player.create(username: "Anon 1", total_score: 90)
 anon_2 = Player.create(username: "Anon 2", total_score: 4)
 anon_3 = Player.create(username: "Anon 3", total_score: 3)
 anon_4 = Player.create(username: "Anon 4", total_score: 2)
