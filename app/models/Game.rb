@@ -33,14 +33,12 @@ class Game < ActiveRecord::Base
     puts "Choose game mode:"
     puts "1. Survival"
     puts "2. First 2 One-Hundred"
-    puts "3. Tic-Tac-Toe"
     mode = gets.chomp
     if mode == '1'
       self.mode = 'Survival'
     elsif mode == '2'
       self.mode = 'First 2 One-Hundred'
-    elsif mode == '3'
-      self.mode = "Tic-Tac-Toe"
+
     else
       puts 'Invalid response.'
       get_game_mode
@@ -151,8 +149,6 @@ class Game < ActiveRecord::Base
       else
         false
       end
-    # when "Tic-Tac-Toe"
-    #   check_whole_board(ttt_board)
     when "Survival"
       if response == correct_answer
         false
