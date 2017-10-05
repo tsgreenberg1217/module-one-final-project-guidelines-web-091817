@@ -14,4 +14,5 @@ class Player < ActiveRecord::Base
     end
     playerArray
   end
+
 end
