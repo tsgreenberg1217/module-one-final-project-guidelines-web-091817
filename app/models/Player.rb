@@ -15,7 +15,6 @@ class Player < ActiveRecord::Base
     playerArray
   end
 
-
   def get_response_from_player(mult_choice)
     puts 'Please submit your answer (a-d):'
     while true
@@ -40,7 +39,7 @@ class Player < ActiveRecord::Base
     response
   end
 
-  
+
 
 
 end

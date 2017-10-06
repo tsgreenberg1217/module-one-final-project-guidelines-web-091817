@@ -8,13 +8,15 @@ class Game < ActiveRecord::Base
   has_many :categories, through: :questions
 
   def self.welcome
-    puts "Welcome to WATSON TRIVIA."
+    puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    puts "      (ツ)   WELCOME TO FLATIRON TRIVIA   (ツ)"
+    puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
   end
 
   def self.display_menu
-    puts "1. Play Game"
-    puts "2. View High Scores"
-    puts "3. Exit Game"
+    puts " 1. Play Game"
+    puts " 2. View High Scores"
+    puts " 3. Exit Game"
   end
 
   def start_game
@@ -25,8 +27,11 @@ class Game < ActiveRecord::Base
   end
 
   def get_players
-    if self.mode == "Tic-Tac-Toe"
+    case self.mode
+    when "Tic-Tac-Toe"
       Player.create_new_players(2)
+    when "Survival"
+      Player.create_new_players(1)
     else
       puts "How many players are playing?"
       number = gets.chomp
@@ -35,11 +40,12 @@ class Game < ActiveRecord::Base
   end
 
   def get_game_mode
-    puts "Choose game mode:"
-    puts "1. Survival"
-    puts "2. First 2 One-Hundred"
-    puts "3. Tic-Tac-Toe"
-    puts "4. Jeopardy"
+    puts "~~~ Choose a game: ~~~"
+    puts " 1. Survival"
+    puts " 2. First 2 One-Hundred"
+    puts " 3. Tic-Tac-Toe"
+    puts " 4. Jeopardy"
+    puts "Please enter a number (1-4):"
     mode = gets.chomp
     if mode == '1'
       self.mode = 'Survival'
@@ -59,6 +65,7 @@ class Game < ActiveRecord::Base
     puts "Choose your difficulty:"
     puts "Easy --- Medium --- Hard"
     diff = gets.chomp.downcase
+    puts ""
 
     if diff == 'easy'
       self.difficulty = 'easy'
@@ -86,6 +93,9 @@ class Game < ActiveRecord::Base
     player_array = self.players
     player_cycler = player_array.cycle
 
+    # ----- create counter object for survival mode -----
+    counter = 1
+
     while true
       # ----- cycle to next player object -----
       current_player = player_cycler.next
@@ -105,15 +115,17 @@ class Game < ActiveRecord::Base
       ##### OG CODE
       current_question, incorrect_resp = Question.create_and_associate_to_player(next_question, current_player)
 
-
-      puts "#{current_player.username}, it's your turn!"
+      puts "#{current_player.username}, it's your turn!" if self.mode == "First 2 One-Hundred"
+      puts "" if self.mode == "First 2 One-Hundred"
+      puts "~~~ Round #{counter} ~~~"
+      puts ""
 
       # ----- display multiple choice -----
       mult_choice = current_question.display_to_player(incorrect_resp)
 
       # ----- ask player for response; record response -----
       response = current_player.get_response_from_player(mult_choice)
-
+      puts ""
 
       # ----- check if right answer; display correct answer if wrong -----
       if current_question.correct?(response)
@@ -124,9 +136,12 @@ class Game < ActiveRecord::Base
         self.players.each{|player| player.save}
         puts "Game Over. Thanks for playing!"
         display_scores(player_array)
+        puts ""
         # Breaking out of while loop
         break
       end
+      counter += 1
+      sleep(2)
     end
   end
 
@@ -143,7 +158,7 @@ class Game < ActiveRecord::Base
       if response == correct_answer
         false
       else
-        puts "You got the question wrong, survival mode has ended. Thanks for playing!"
+        # puts "You got the question wrong, survival mode has ended. Thanks for playing!"
         true
       end
     when "Tic-Tac-Toe"
@@ -167,12 +182,12 @@ class Game < ActiveRecord::Base
   end
 
   def self.show_high_scores
-    ["First 2 One-Hundred", "Survival", "Jeopardy"].each do |game_name|
+    ["Survival", "First 2 One-Hundred", "Jeopardy"].each do |game_name|
       place = (1..10).to_a.cycle
-      puts ""
-      puts "TOP 10 SCORES FOR #{game_name.upcase}"
-      puts "---------------------------------"
-      self.all.select{|game_1| game_1.mode == game_name}.collect{|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}[0..9].each{|player| puts "#{place.next}.#{player.username} -------------------- #{player.total_score}"}
+      puts "-------------------------------------------------------"
+      puts "    ★★★  TOP 10 SCORES FOR #{game_name.upcase}  ★★★"
+      puts "-------------------------------------------------------"
+      self.all.select{|game_1| game_1.mode == game_name}.collect{|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}[0..9].each{|player| puts "     #{place.next}.   #{player.total_score}   ---   #{player.username}"}
       puts ""
     end
 
@@ -190,11 +205,12 @@ class Game < ActiveRecord::Base
   # -----------------------------------------------------------------------------
 
   def self.run
-    Game.welcome
-
     while input ||= true
+      Game.welcome
       Game.display_menu
+      puts "Please choose from the menu above (1-3):"
       input = gets.chomp
+      puts ""
       case input
       when '1'
         new_game = Game.create
@@ -245,7 +261,9 @@ class Game < ActiveRecord::Base
   end
 
   def display_TTT_board(board)
-    puts "             "
+    puts "xoxoxoxoxoxoxooxoxoxoxo"
+    puts "      TIC TAC TOE"
+    puts "oxoxoxoxoxoxooxoxoxoxox"
     puts "       1   2   3"
     puts "          "
     puts "  1:   #{board[0][0]} | #{board[0][1]} | #{board[0][2]} "
@@ -285,6 +303,10 @@ class Game < ActiveRecord::Base
     player_array = players_choose_symbols(self.players)
     player_cycler = player_array.cycle
 
+    # ----- display initial TTT board -----
+    puts ""
+    display_TTT_board(board)
+
     while true
       # ----- cycle to next player object -----
       current_player = player_cycler.next
@@ -307,6 +329,8 @@ class Game < ActiveRecord::Base
 
       # ----- ask player for response; record response -----
       response = current_player.get_response_from_player(mult_choice)
+      puts ""
+
       # ----- check if right answer; display correct answer if wrong -----
       if current_question.correct?(response)
         ttt_correct(current_player, board)
@@ -317,7 +341,6 @@ class Game < ActiveRecord::Base
       end
     end
   end
-
 
   def ttt_correct(player, board)
     display_TTT_board(board)
@@ -358,7 +381,7 @@ class Game < ActiveRecord::Base
     return false
   end
 
-  def accross?(board)
+  def across?(board)
     3.times do |x|
       array = []
       3.times do |y|
@@ -379,7 +402,7 @@ class Game < ActiveRecord::Base
 
 
   def check_for_winner?(board)
-    [vertical?(board), accross?(board), diagonal_1?(board), diagonal_2?(board)].include?(true)
+    [vertical?(board), across?(board), diagonal_1?(board), diagonal_2?(board)].include?(true)
   end
 
   def no_blank_space?(board)
@@ -418,9 +441,9 @@ class Game < ActiveRecord::Base
 
   def display_board(board, cats)
     puts "                                                       "
-    puts "-------------------------------------------------------"
-    puts "--------------------- JEOPARDY! -----------------------"
-    puts "-------------------------------------------------------"
+    puts "☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆"
+    puts "                      JEOPARDY!                        "
+    puts "☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆"
     puts "                                                       "
     puts "     1: #{cats["1"]}  //  2: #{cats["2"]}  //  3: #{cats["3"]}  //  4: #{cats["4"]}"
     puts "                                                       "
@@ -432,8 +455,6 @@ class Game < ActiveRecord::Base
     puts "        ------------------------------------------     "
     puts "     c: ||  #{board["c1"]}  ||  #{board["c2"]}  ||  #{board["c3"]}  ||  #{board["c4"]}  ||     "
     puts "        ------------------------------------------     "
-    puts "                                                       "
-    puts "-------------------------------------------------------"
     puts "                                                       "
   end
 
@@ -565,9 +586,8 @@ class Game < ActiveRecord::Base
         mult_choice = current_question.display_to_player(incorrect_resp)
 
         # ----- ask player for response; record response -----
-        puts 'Please submit your answer (a-d):'
-
         response = current_player.get_response_from_player(mult_choice)
+        puts ""
 
         # ----- check if right answer; display correct answer if wrong -----
         if current_question.correct?(response)
@@ -581,6 +601,8 @@ class Game < ActiveRecord::Base
           self.players.each{|player| player.save}
           break
         end
+
+        sleep(2)
       end
       display_board(board, cats)
       announce_winner
@@ -588,5 +610,6 @@ class Game < ActiveRecord::Base
     end
     display_scores(player_array)
     puts "Game over! Thanks for playing."
+    puts ""
   end
 end
