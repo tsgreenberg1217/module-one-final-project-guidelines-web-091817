@@ -36,3 +36,6 @@ game_3 = Game.create(players: [anon_1, anon_2, anon_3, anon_4, anon_5], mode: "F
 game_4 = Game.create(players: [anon_6, anon_7], mode: "Jeopardy", difficulty: nil)
 game_5 = Game.create(players: [anon_8, anon_9, anon_10, anon_11], mode: "Jeopardy", difficulty: nil)
 game_6 = Game.create(players: [anon_12, anon_13, anon_14, anon_15], mode: "Jeopardy", difficulty: nil)
+game_4 = Game.create(players: [anon_1, anon_2, anon_3, anon_4, anon_5], mode: "Survival", difficulty: "Hard")
+game_3 = Game.create(players: [anon_1, anon_2, anon_3, anon_4, anon_5], mode: "Jeopardy", difficulty: "Hard")
+game_4 = Game.create(players: [anon_1, anon_2, anon_3, anon_4, anon_5], mode: "Survival", difficulty: "Hard")
