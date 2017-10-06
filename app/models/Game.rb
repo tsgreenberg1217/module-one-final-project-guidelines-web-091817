@@ -167,12 +167,24 @@ class Game < ActiveRecord::Base
   end
 
   def self.show_high_scores
-    puts "--------------- ALL-TIME HIGH SCORES ------------------"
-    high_scores = self.all.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}
-    (1..10).to_a.each do |num|
-      puts "#{num}. #{high_scores[num-1].username} --------------- #{high_scores[num-1].total_score}"
+    #binding.pry
+    ["First 2 One-Hundred", "Survival", "Jeopardy"].each do |game_name|
+      #binding.pry
+      place = (1..10).to_a.cycle
+      puts "        "
+      puts"TOP 10 SCORES FOR #{game_name.upcase}"
+      puts "---------------------------------"
+      self.all.select{|game_1| game_1.mode == game_name}.collect{|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}[0..9].each{|player| puts "#{place.next}.#{player.username} -------------------- #{player.total_score}"}
+      puts " "
     end
-    puts "-------------------------------------------------------"
+
+    # puts "--------------- ALL-TIME HIGH SCORES ------------------"
+    # binding.pry
+    # high_scores = self.all.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}
+    # (1..10).to_a.each do |num|
+    #   puts "#{num}. #{high_scores[num-1].username} --------------- #{high_scores[num-1].total_score}"
+    # end
+    # puts "-------------------------------------------------------"
   end
 
   # -----------------------------------------------------------------------------
@@ -184,7 +196,7 @@ class Game < ActiveRecord::Base
 
     while input ||= true
       Game.display_menu
-      binding.pry
+      # binding.pry
       input = gets.chomp
       case input
       when '1'
