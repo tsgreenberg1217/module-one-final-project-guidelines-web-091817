@@ -3,7 +3,7 @@
 
 ## About
 
-This project is intended to be a simple yet fun take on trivia through a user's Command Line Interface. There are 4 trivia formats from which a user can choose from: Single-player Survival, Multi-player Round Based, Multi-player Tic-Tac-Toe (i.e. Squares), and Multi-player "Jeopardy" spin-off. The project leverages the "Open Trivia Database" (src: https://opentdb.com/api_config.php), a free and open-source API, to provide multiple choice trivia questions across 32 categories ranging from film, music, movies, etc. (Note: Certain formats use questions stored in a locally seeded DB to reduce frequency of API requests)
+This project is intended to be a simple take on trivia through a user's Command Line Interface. There are 4 trivia formats from which a user can choose from: Single-player Survival, Multi-player Round Based, Multi-player Tic-Tac-Toe (i.e. Squares), and Multi-player "Jeopardy" spin-off. The project leverages the "Open Trivia Database" (src: https://opentdb.com/api_config.php), a free and open-source API, to provide multiple choice trivia questions across 32 categories ranging from film, music, movies, etc. (Note: Certain formats use questions stored in a locally seeded DB to reduce frequency of API requests)
 
 ### Game Formats
 
