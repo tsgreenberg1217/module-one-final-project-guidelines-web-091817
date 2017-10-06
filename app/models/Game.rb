@@ -21,6 +21,7 @@ class Game < ActiveRecord::Base
     get_game_mode
     get_players.each {|player| self.players << player }
     get_difficulty if self.mode == "Survival" || self.mode == "First 2 One-Hundred"
+    save
   end
 
   def get_players
@@ -121,7 +122,6 @@ class Game < ActiveRecord::Base
 
       if game_over?(current_player, response, current_question.correct_answer, board = nil)
         self.players.each{|player| player.save}
-        self.save
         puts "Game Over. Thanks for playing!"
         display_scores(player_array)
         # Breaking out of while loop
@@ -167,12 +167,17 @@ class Game < ActiveRecord::Base
   end
 
   def self.show_high_scores
-    puts "--------------- ALL-TIME HIGH SCORES ------------------"
-    high_scores = self.all.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}
-    (1..10).to_a.each do |num|
-      puts "#{num}. #{high_scores[num-1].username} --------------- #{high_scores[num-1].total_score}"
+    counter = 1
+    ["Survival", "First 2 One-Hundred", "Jeopardy"].each do |mode|
+      puts ""
+      puts "---------- ALL-TIME HIGH SCORES - #{mode} -------------"
+      self.all.select {|game| game.mode == mode}.collect {|game| game.players}.flatten.sort {|a,b| b.total_score <=> a.total_score}[0..9].each do |player|
+        puts "#{counter}. #{player.username} --------------- #{player.total_score}"
+      end
+      puts "-------------------------------------------------------"
+      puts ""
+      counter += 1
     end
-    puts "-------------------------------------------------------"
   end
 
   # -----------------------------------------------------------------------------
@@ -184,7 +189,6 @@ class Game < ActiveRecord::Base
 
     while input ||= true
       Game.display_menu
-      binding.pry
       input = gets.chomp
       case input
       when '1'
@@ -570,7 +574,6 @@ class Game < ActiveRecord::Base
 
         if board_empty?(board)
           self.players.each{|player| player.save}
-          self.save
           break
         end
       end
