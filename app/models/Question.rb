@@ -26,16 +26,14 @@ class Question < ActiveRecord::Base
    sentence.split('&quot;').join('').split('&#039;').join('')
   end
 
-
   def display_to_player(incorrect_resp)
     responses = [incorrect_resp, self.correct_answer].flatten.shuffle
-    puts "-- #{self.category.name}:"
-    puts "-- #{filter_question(self.content)}"
+    puts " ▶ Category: #{self.category.name}"
+    puts " ▶ Question: #{filter_question(self.content)}"
     puts "     a) #{responses[0]}"
     puts "     b) #{responses[1]}"
     puts "     c) #{responses[2]}"
     puts "     d) #{responses[3]}"
-    puts "-------------------------------------------------------"
     puts ""
     responses
   end
@@ -50,17 +48,16 @@ class Question < ActiveRecord::Base
       [current_question, incorrect_resp]
   end
 
-
   def correct?(response)
     if response == self.correct_answer
       puts 'You are correct!'
+      puts ""
       true
     else
       puts "Sorry, that is not the right answer. The correct answer is #{self.correct_answer}."
+      puts ""
       false
     end
   end
-
-
 
 end
